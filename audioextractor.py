@@ -247,6 +247,7 @@ if st.button(
     type="primary",
     use_container_width=True,
 ):
+    st.session_state.pop("audio_result", None)
 
     if not video_url.strip():
         st.warning("Please paste a video link first.")
@@ -354,11 +355,12 @@ if st.button(
 
                 st.success("Audio extracted successfully!")
 
-            except Exception:
+            except Exception as exc:
                 st.error(
                     "Unable to extract audio from this link. "
                     "Please try another supported public video."
                 )
+                st.caption(f"{type(exc).__name__}: {exc}")
 
 
 # --------------------------------------------------
