@@ -1,5 +1,6 @@
 
 import html
+import logging
 import re
 import shutil
 import subprocess
@@ -260,8 +261,8 @@ if st.button(
 
         if not ffmpeg_path:
             st.error(
-                "Audio conversion is temporarily unavailable. "
-                "Please try again later."
+                "FFmpeg is missing on the server. Add ffmpeg to the "
+                "deployment's system packages and redeploy."
             )
 
         else:
@@ -356,11 +357,18 @@ if st.button(
                 st.success("Audio extracted successfully!")
 
             except Exception as exc:
+                logging.exception("Audio extraction failed")
                 st.error(
                     "Unable to extract audio from this link. "
-                    "Please try another supported public video."
+                    "Check that the link is accessible to the hosting "
+                    "server and that the deployed FFmpeg dependency is available."
                 )
-                st.caption(f"{type(exc).__name__}: {exc}")
+                details = (
+                    getattr(exc, "stderr", None)
+                    or getattr(exc, "msg", None)
+                    or str(exc)
+                )
+                st.caption(f"{type(exc).__name__}: {details[-1000:]}")
 
 
 # --------------------------------------------------
